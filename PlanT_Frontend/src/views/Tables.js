@@ -7,7 +7,7 @@ import PlacesList from "variables/Places";
 function TableList() {
   const location = useLocation();
   console.log(location);
-  const { Tagvalue = '', City1 = '', City2 = '', move = ''} = location.state || {};
+  const { Tagvalue = '', move = ''} = location.state || {};
   const [visitCount, setVisitCount] = useState(parseInt(localStorage.getItem('visitCount')) || 0);
 
   const Places = PlacesList;
@@ -114,24 +114,24 @@ const senddata2 = {
     setSearchedPlaces(filteredPlaces);
   };
 
-  useEffect(() => {
-    // 페이지가 처음 로드될 때 전체 도시 목록을 표시
-    if (Tagvalue) {
-      const filteredPlaces = Places.filter(place => place.tag === Tagvalue);
-      setSearchedPlaces(filteredPlaces);
-      setVisitCount(prevCount => prevCount + 1);
-      if (visitCount + 1 > 3) {
-        localStorage.removeItem('visitCount');
-      }
-      else {
-      // 방문 횟수를 로컬 스토리지에 저장합니다.
-      localStorage.setItem('visitCount', visitCount + 1);
-      }
-    }
-    else {
-      setSearchedPlaces(Places2);
-    }
-  }, []);
+  // useEffect(() => {
+  //   // 페이지가 처음 로드될 때 전체 도시 목록을 표시
+  //   if (Tagvalue) {
+  //     const filteredPlaces = Places.filter(place => place.tag === Tagvalue);
+  //     setSearchedPlaces(filteredPlaces);
+  //     setVisitCount(prevCount => prevCount + 1);
+  //     if (visitCount + 1 > 3) {
+  //       localStorage.removeItem('visitCount');
+  //     }
+  //     else {
+  //     // 방문 횟수를 로컬 스토리지에 저장합니다.
+  //     localStorage.setItem('visitCount', visitCount + 1);
+  //     }
+  //   }
+  //   else {
+  //     setSearchedPlaces(Places2);
+  //   }
+  // }, []);
 
   const handlePlaceClick = (place) => {
     if (selectedPlaces.find(item => item.id === place.id)) {

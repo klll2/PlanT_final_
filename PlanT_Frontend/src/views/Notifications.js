@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NotificationAlert from "react-notification-alert";
 import {
   Button,
@@ -18,14 +18,15 @@ import {
   DropdownItem
 } from "reactstrap";
 import logo from '../plant.png'
+import MapWrapper from "./Mapwraper";
+import axios from "axios";
+
 
 function Notifications() {
   const notificationAlert = React.useRef();
-  const [selectedTag, setSelectedTag] = useState('태그를 선택하세요');
-  const [selectedbutton, setSelectedbutton] = useState('');
-  const [selectedtable, setSelectedtable] = useState('');
 
-  const notify = (place) => {
+  const placeIds = [2, 1, 12, 19, 26];
+  const notify = (message) => {
     var color = Math.floor(Math.random() * 5 + 1);
     var type;
     switch (color) {
@@ -49,34 +50,78 @@ function Notifications() {
     }
     var options = {};
     options = {
-      place: place,
+      place: "tc",
       message: (
         <div>
           <div>
-            Welcome to <b>Paper Dashboard React</b> - a beautiful freebie for
-            every web developer.
+           {message}
           </div>
         </div>
       ),
       type: type,
-      icon: "nc-icon nc-bell-55",
+      // icon: "nc-icon nc-bell-55",
       autoDismiss: 7,
     };
     notificationAlert.current.notificationAlert(options);
   };
 
-  const handleTagSelect = (tag) => {
-    setSelectedTag(tag); // 선택된 태그 업데이트
-  };
 
-  const handleButtonSelect = (button) => {
-    setSelectedbutton(button); // 선택된 태그 업데이트
-  };
+  const [clientPlans, setClientPlans] = useState({});
+  const [selectedButton, setSelectedButton] = useState('');
+  const [plcNames, setPlcNames] = useState([]);
+  const [plcTimes, setPlcTimes] = useState([]);
+  const [plnScore, setPlnScore] = useState("");
 
-  const handletableSelect = (table) => {
-    setSelectedtable(table); // 선택된 태그 업데이트
-  };
+  useEffect(() => {
 
+    const formatDate = (dateStr) => {
+      const date = new Date(dateStr);
+      const year = date.getFullYear();
+      const month = ('0' + (date.getMonth() + 1)).slice(-2);
+      const day = ('0' + date.getDate()).slice(-2);
+      return `${year}-${month}-${day}`;
+    };
+
+    const fetchData = async () => {
+      try {
+        const data = {
+          trvlr_id: localStorage.getItem('trvlr_id'),
+          start_date: formatDate(localStorage.getItem('start_date')),
+          end_date: formatDate(localStorage.getItem('end_date')),
+          selected_tags: JSON.parse(localStorage.getItem('selected_tags')).map(tag => tag.id)
+        };
+
+        const response = await axios.post('http://localhost:8000/account/plans/new/', data);
+        console.log(response.data);
+        const { plc_names, plc_times, pln_score } = response.data;
+        setPlcNames(plc_names);
+        setPlcTimes(plc_times);
+        setPlnScore(pln_score);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+
+  // const handleTagSelect = (tag) => {
+  //   setSelectedTag(tag); // 선택된 태그 업데이트
+  // };
+
+  // const handleButtonSelect = (button) => {
+  //   setSelectedButton(button); // 선택된 태그 업데이트
+  // };
+
+  // const handletableSelect = (table) => {
+  //   setSelectedtable(table); // 선택된 태그 업데이트
+  // };
+
+
+
+  const handleButtonClick = (message) => {
+    notify(message);
+  };
 
   return (
     <>
@@ -86,20 +131,14 @@ function Notifications() {
           <Col md="12">
             <Card>
               <CardHeader>
-                <CardTitle tag="h5">Input for Trip(3/3)</CardTitle>
+                <CardTitle tag="h5">Plans by PlanT</CardTitle>
                 <Nav tabs>
                   <NavItem>
-                        <NavLink href="#" active>1일차</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink href="/admin/notifications/pla1">2일차</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink disabled href="#">3일차(이동일정)</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink href="#">4일차</NavLink>
-                    </NavItem>
+                    <NavLink href="#" active>1일차</NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink href="#">2일차</NavLink>
+                  </NavItem>
                 </Nav>
               </CardHeader>
               <CardBody>
@@ -107,61 +146,25 @@ function Notifications() {
                   <Col md="6">
                     <Card className="card-plain">
                       <CardHeader>
-                        <CardTitle tag="h5">Additional Schedule</CardTitle>
+                        <CardTitle tag="h5">Daily Schedule</CardTitle>
                       </CardHeader>
                       <CardBody>
-                        <UncontrolledDropdown group>
-                          <DropdownToggle caret color="info">
-                            {selectedTag}
-                          </DropdownToggle>
-                          <DropdownMenu>
-                            <DropdownItem onClick={() => handleTagSelect("쇼핑")}>쇼핑</DropdownItem>
-                            <DropdownItem onClick={() => handleTagSelect("식사")}>식사</DropdownItem>
-                            <DropdownItem onClick={() => handleTagSelect("관광")}>관광</DropdownItem>
-                            <DropdownItem onClick={() => handleTagSelect("카페")}>카페</DropdownItem>
-                            <DropdownItem onClick={() => handleTagSelect("이동")}>이동</DropdownItem>
-                          </DropdownMenu>
-                        </UncontrolledDropdown>
-                        <br />
-                        <hr />
-                        <div className="text-center">
-                          <Button color="warning" fade={false}>
-                            <span>그랜트 하얏트 서울(숙박)</span>
-                          </Button>
-                          <br />
-                          <Button color="secondary" onClick={() => handleButtonSelect('+')}>+</Button>
-                          <br />
-                          {selectedtable === 'on' && (
-                            <div>  
+                      <hr/>
+                      <div className="text-center">
+                          {plcNames.map((place, index) => (
+                            <div key={index}>
                               <Button color="success" fade={false}>
-                                <span>풀리너마이트(식사)</span>
+                                <span>{place}</span>
                               </Button>
                               <br />
-                              <Button color="secondary">+</Button>
+                              {index < plcTimes.length / 2 && (
+                                <Button color="secondary" onClick={() => handleButtonClick(plcTimes[2 * index]+ "~" + plcTimes[2 * index + 1])}>
+                                  <span> + </span>
+                                </Button>
+                              )}
                               <br />
                             </div>
-                          )}
-                          <Button color="success" fade={false}>
-                            <span>평화의 공원(관광)</span>
-                          </Button>
-                          <br />
-                          <Button color="secondary">+</Button>
-                          <br />
-                          <Button
-                            color="danger"
-                            fade={false}
-                          >
-                            <span>서서울호수공원(관광)</span>
-                          </Button>
-                          <br />
-                          <Button color="secondary">+</Button>
-                          <br />
-                          <Button
-                            color="warning"
-                            fade={false}
-                          >
-                            <span>그랜트 하얏트 서울(숙박)</span>
-                          </Button>
+                          ))}
                         </div>
                       </CardBody>
                     </Card>
@@ -169,110 +172,27 @@ function Notifications() {
                   <Col md="6">
                     <Card className="card-plain">
                       <CardHeader>
-                        <CardTitle tag="h5">Possible Places</CardTitle>
+                        <CardTitle tag="h5">Display On Map</CardTitle>
                       </CardHeader>
                       <CardBody>
-                        <br />
-                        <br />
-                        <Table responsive>
-                          <thead className="text-primary">
-                            <tr>
-                              <th>Name</th>
-                              <th>Tag</th>
-                              <th>City</th>
-                              <th>Eco</th>
-                            </tr>
-                          </thead>
-                          {selectedbutton === '+' && (
-                          <tbody>
-                            <tr>
-                              <td>뉴욕비앤씨 신촌본점</td>
-                              <td>식사</td>
-                              <td>서울</td>
-                              <td><img src={logo} alt="react-logo" width="30" height="30" /></td>
-                            </tr>
-                            <tr>
-                              <td>점점점점점점</td>
-                              <td>식사</td>
-                              <td>서울</td>
-                              <td><img src={logo} alt="react-logo" width="30" height="30" /></td>
-                            </tr>
-                            <tr>
-                              <td>아민 연남</td>
-                              <td>식사</td>
-                              <td>서울</td>
-                              <td><img src={logo} alt="react-logo" width="30" height="30" /></td>
-                            </tr>
-                            <tr>
-                              <td>마이 리틀 마운틴</td>
-                              <td>식사</td>
-                              <td>서울</td>
-                              <td><img src={logo} alt="react-logo" width="30" height="30" /></td>
-                            </tr>
-                            
-                            <tr onClick={() => handletableSelect('on')}>
-                              <td>풀리너마이트 홍대</td>
-                              <td>식사</td>
-                              <td>서울</td>
-                              <td></td>
-                            </tr>
-                            <tr>
-                              <td>독타운피자</td>
-                              <td>식사</td>
-                              <td>서울</td>
-                              <td></td>
-                            </tr>
-                            <tr>
-                              <td>저스트텐동 연남본점</td>
-                              <td>식사</td>
-                              <td>서울</td>
-                              <td></td>
-                            </tr>
-                            <tr>
-                              <td>키친31</td>
-                              <td>식사</td>
-                              <td>서울</td>
-                              <td></td>
-                            </tr>
-                           </tbody>  
-                          )}  
-                          {!selectedbutton && (
-                          <tbody> 
-                           <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                           </tr> 
-                          </tbody>
-                          )}
-                          
-
-                        </Table>
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        {selectedtable === 'on' && (
-                        <div className="text-center">
-                          <p>11h(default) - 2h * 3(일정 개수, 숙소 제외) = 5h</p>
-                          <h5> 현재 가용시간 : 5h </h5>
-                        </div>
-                        )}
-                        {!selectedtable && (
-                        <div className="text-center">
-                          <p>11h(default) - 2h * 2(일정 개수, 숙소 제외) = 7h</p>
-                          <h5> 현재 가용시간 : 7h </h5>
-                        </div>
-                        )}
-                        <br />
+                      <hr />
+                      <div
+                        id="map"
+                        className="map"
+                        style={{ position: "relative", overflow: "hidden" }}
+                      >
+                        <MapWrapper placeIds={placeIds} />
+                      </div>
                       </CardBody>
+                      <hr/>
+                      <p>{ plnScore }</p>
                     </Card>
                   </Col>
                 </Row>
               </CardBody>
               <br />
               <br />
+              <hr />
               <br />
               <div>
                 <Col className="ml-auto mr-auto" lg="8">
@@ -294,8 +214,8 @@ function Notifications() {
                         className="btn-round"
                         color="primary"
                         type="submit"
-                        href="http://localhost:3000/admin/maps">
-                        Next
+                        href="http://localhost:3000/admin/mypage">
+                        Home
                       </Button>
                     </Col>
                   </Row>
@@ -304,7 +224,6 @@ function Notifications() {
             </Card>
           </Col>
         </Row>
-
       </div>
     </>
   );

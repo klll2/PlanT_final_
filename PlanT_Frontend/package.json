@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
+    "@babel/plugin-proposal-private-property-in-object" : "7.21.11",
     "axios": "^1.6.8",
     "bootstrap": "4.6.2",
     "chart.js": "3.9.1",
@@ -11,6 +12,7 @@
     "perfect-scrollbar": "^1.5.0",
     "react": ">=16.8.0",
     "react-chartjs-2": "3.3.0",
+    "react-cookie": "^7.1.4",
     "react-dom": ">=16.8.0",
     "react-google-login": "^5.2.2",
     "react-notification-alert": "0.0.13",

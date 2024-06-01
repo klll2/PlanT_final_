@@ -27,6 +27,7 @@ import Pla2 from "views/Pla2";
 import Map2 from "views/Map2";
 import Map3 from "views/Map3";
 import Login from "views/LoginGoogle";
+import Mypage from "views/Mypage";
 // import UserPage from "views/User.js";
 // import UpgradeToPro from "views/Upgrade.js";
 
@@ -39,31 +40,31 @@ var routes = [
   //   layout: "/admin",
   // },
   {
+    path: "/mypage",
+    name: "My Page",
+    icon: "nc-icon nc-diamond",
+    component: <Mypage />,
+    layout: "/admin",
+  },
+  {
     path: "/icons",
-    name: "Input Page(1)",
+    name: "Input Page",
     icon: "nc-icon nc-diamond",
     component: <Icons />,
     layout: "/admin",
   },
+  // {
+  //   path: "/tables",
+  //   name: "Input Page(2)",
+  //   icon: "nc-icon nc-tile-56",
+  //   component: <TableList />,
+  //   layout: "/admin",
+  // },
   {
-    path: "/tables",
-    name: "Input Page(2)",
-    icon: "nc-icon nc-tile-56",
-    component: <TableList />,
-    layout: "/admin",
-  },
-  {
-    path: "/notifications",
-    name: "Input Page(3)",
+    path: "/plans",
+    name: "Output Page",
     icon: "nc-icon nc-bell-55",
     component: <Notifications />,
-    layout: "/admin",
-  },
-  {
-    path: "/maps",
-    name: "Output Page",
-    icon: "nc-icon nc-pin-3",
-    component: <Maps />,
     layout: "/admin",
   },
   {

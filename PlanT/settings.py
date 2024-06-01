@@ -11,14 +11,17 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-
+from django.conf import settings
+from datetime import timedelta
 from PlanT import PlanT_Backend
 
+
+# AUTH_USER_MODEL = 'PlanT_Backend.User'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+CORS_ALLOW_ALL_ORIGINS = True
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -41,20 +44,37 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     # 'social_django',
     # 'oauth2_provider',
-    # 'allauth',
+    'allauth',
     # 'allauth.account',
     # 'allauth.socialaccount',
     # 'allauth.socialaccount.providers.google',
-    # 'rest_framework',
-    # 'rest_framework.authtoken',
+    'rest_framework',
+    # 'rest_framework_simplejwt',
     # 'dj_rest_auth',
     # 'dj_rest_auth.registration',
-#    'rest_framework_simplejwt.token_blacklist',
+    # 'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'PlanT.PlanT_Backend',
 ]
+
+CSRF_COOKIE_NAME = 'csrftoken'
+
+REST_FRAMEWORK = {
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
+    # ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    
+}
+
+
+# ACCOUNT_USER_MODEL_USERNAME_FIELD = None # username 필드 사용 x
+# ACCOUNT_EMAIL_REQUIRED = True            # email 필드 사용 o
+# ACCOUNT_USERNAME_REQUIRED = False        # username 필드 사용 x
+# ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 
 MIDDLEWARE = [
@@ -63,7 +83,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -73,53 +93,67 @@ MIDDLEWARE = [
 
 # CORS 추가
 CORS_ORIGIN_WHITELIST = (
-    'http://127.0.0.1:8000', 'http://localhost:3000')
+    'http://localhost:8000', 'http://localhost:3000')
 CORS_ALLOW_CREDENTIALS = True
 
+# CORS_ALLOW_HEADERS = [
+#     "content-type",  # 필수적으로 포함되어야 하는 헤더
+#     "authorization",  # 필요한 경우에만 포함되는 헤더
+#     "x-user-email",   # x-user-email 헤더 추가
+# ]
+
 ROOT_URLCONF = 'PlanT.urls'
-"""
-# Django REST default setting
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
-"""
+# """
+# # Django REST default setting
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     )
+# }
+# """
 
-# JWT 토큰 설정입니다.
 # SIMPLE_JWT = {
-#     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5), # ACCESS Token의 유효기간
-#     'REFRESH_TOKEN_LIFETIME': timedelta(days=50), # Refresh 토큰의 유효기간
-#     'ROTATE_REFRESH_TOKENS': True,
-#     'BLACKLIST_AFTER_ROTATION': True,
-#     'UPDATE_LAST_LOGIN': False,
+#     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+#     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+#     "ROTATE_REFRESH_TOKENS": False,
+#     "BLACKLIST_AFTER_ROTATION": False,
+#     "UPDATE_LAST_LOGIN": False,
 
-#     'ALGORITHM': 'HS256',
+#     "ALGORITHM": "HS256",
+#     "SIGNING_KEY": settings.SECRET_KEY,
+#     "VERIFYING_KEY": "",
+#     "AUDIENCE": None,
+#     "ISSUER": None,
+#     "JSON_ENCODER": None,
+#     "JWK_URL": None,
+#     "LEEWAY": 0,
 
-#     'VERIFYING_KEY': None,
-#     'AUDIENCE': None,
-#     'ISSUER': None,
-#     'JWK_URL': None,
-#     'LEEWAY': 0,
+#     "AUTH_HEADER_TYPES": ("Bearer",),
+#     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+#     "USER_ID_FIELD": "email",
+#     "USER_ID_CLAIM": "user_email",
+#     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
 
-#     'AUTH_HEADER_TYPES': ('Bearer',),
-#     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
-#     'USER_ID_FIELD': 'id',
-#     'USER_ID_CLAIM': 'user_id',
-#     'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+#     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+#     "TOKEN_TYPE_CLAIM": "token_type",
+#     "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
 
-#     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-#     'TOKEN_TYPE_CLAIM': 'token_type',
-#     'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+#     "JTI_CLAIM": "jti",
 
-#     'JTI_CLAIM': 'jti',
+#     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
+#     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
+#     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 
-#     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-#     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
-#     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+#     "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
+#     "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
+#     "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
+#     "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
+#     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
+#     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
+
+#     'BLACKLIST_CHECKS': True,  # 블랙리스트 기능 활성화
 # }
 
-CORS_ALLOW_ALL_ORIGINS = True
 
 
 TEMPLATES = [
@@ -148,7 +182,7 @@ WSGI_APPLICATION = 'PlanT.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'plant_1',
+        'NAME': 'plant_0530',
         'USER': 'root',
         'PASSWORD': '0000',
         'HOST': 'localhost',

@@ -7,12 +7,49 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 # import datetime
 # from django.contrib.auth.models import AbstractUser, Group, Permission
+# from django.contrib.auth.models import AbstractUser, BaseUserManager, Group, Permission
 from django.db import models
 
+# class CustomUserManager(BaseUserManager):
+#     def create_user(self, user_email, password=None, **extra_fields):
+#         if not user_email:
+#             raise ValueError('The user_email field must be set')
+#         user_email = self.normalize_email(user_email)
+#         user = self.model(user_email=user_email, **extra_fields)
+#         user.set_password(password)  # 패스워드 설정
+#         user.save(using=self._db)
+#         return user
 
-class User(models.Model):
-    user_email = models.EmailField(primary_key=True)
-    last_login = models.DateTimeField(auto_now=True)
+#     def create_superuser(self, user_email, password=None, **extra_fields):
+#         extra_fields.setdefault('is_staff', True)
+#         extra_fields.setdefault('is_superuser', True)
+#         extra_fields.setdefault('username', user_email)  # 변경: username을 user_email로 설정
+#         if extra_fields.get('is_staff') is not True:
+#             raise ValueError('Superuser must have is_staff=True.')
+#         if extra_fields.get('is_superuser') is not True:
+#             raise ValueError('Superuser must have is_superuser=True.')
+#         return self.create_user(user_email, password=password, **extra_fields)
+
+
+# class User(AbstractUser):
+#     user_email = models.EmailField(primary_key=True, unique=True)
+    
+#     def save(self, *args, **kwargs):
+#         self.username = self.user_email  # user_email 값을 username에 할당
+#         super().save(*args, **kwargs)
+    
+#     groups = models.ManyToManyField(Group, related_name='planT_Backend_user_groups')
+#     permissions = models.ManyToManyField(Permission, related_name='planT_Backend_user_permissions')
+
+#     USERNAME_FIELD = 'user_email'
+#     REQUIRED_FIELDS = []
+    
+#     objects = CustomUserManager()
+
+
+class Traveler(models.Model):
+    trvlr_id = models.AutoField(primary_key=True)
+    trvlr_email = models.EmailField(unique=True)
 
 
 # class City(models.Model):
@@ -39,7 +76,7 @@ class Place(models.Model):
     place_time = models.PositiveSmallIntegerField()
     place_latitude = models.DecimalField(max_digits=8, decimal_places=6)
     place_longitude = models.DecimalField(max_digits=9, decimal_places=6)
-    place_detail = models.JSONField(default=None)
+    # place_detail = models.JSONField(null=True, default=None)
     place_tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
 
 
@@ -53,8 +90,17 @@ class Trip(models.Model):
         (3, '완료'),
     )
     trip_state = models.PositiveSmallIntegerField(choices=STATE_CHOICES)
-    trip_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    trip_traveler = models.ForeignKey(Traveler, on_delete=models.CASCADE)
+    trip_tag = models.ManyToManyField(Tag, through='TripTag')
+    
 
+class TripTag(models.Model):
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('trip', 'tag')
+        
 
 class Plan(models.Model):
     plan_id = models.AutoField(primary_key=True)
@@ -64,8 +110,8 @@ class Plan(models.Model):
 
 class Route(models.Model):
     route_id = models.AutoField(primary_key=True)
-    route_starttime = models.DateTimeField()
-    route_endtime = models.DateTimeField()
+    # route_starttime = models.DateTimeField()
+    # route_endtime = models.DateTimeField()
     # route_detail = models.JSONField(blank=True, null=True, default=None)
     route_start = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='route_start_place')
     route_end = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='route_end_place')

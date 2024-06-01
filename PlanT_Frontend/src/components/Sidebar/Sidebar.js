@@ -54,7 +54,7 @@ function Sidebar(props) {
     >
       <div className="logo">
         <a
-          href="http://localhost:3000/admin/icons"
+          href="http://localhost:3000/admin/mypage"
           className="simple-text logo-mini"
         >
           <div className="logo-img">
@@ -62,7 +62,7 @@ function Sidebar(props) {
           </div>
         </a>
         <a
-          href="http://localhost:3000/admin/icons"
+          href="http://localhost:3000/admin/mypage"
           className="simple-text logo-normal"
         >
           PlanT

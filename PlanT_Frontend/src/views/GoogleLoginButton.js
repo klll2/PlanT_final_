@@ -7,23 +7,25 @@ import {
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
+// import { useCookies } from 'react-cookie';
 
 
 const GoogleLoginButton = () => {
+    // const [cookies, setCookie] = useCookies(['trvlr_id', 'trvlr_email']);
 
     const handleLoginSuccess = async (response) => {
         try {
-            console.log(response);
+            console.log(response);       
             var profileObj = jwtDecode(response.credential);
             console.log(profileObj);
-            const email = profileObj.email;
-            const image = profileObj.picture;
-            // 이메일을 Django로 보내어 사용자 생성 또는 확인
-            const djangoResponse = await axios.post('http://localhost:8000/account/login/', { email });
+            const mail = JSON.stringify(profileObj.email);
+            const djangoResponse = await axios.post('http://localhost:8000/account/login/', { mail });
             console.log(djangoResponse.data); // Django로부터 받은 사용자 정보 출력
-            // 페이지를 다시 로드하여 이동
-            localStorage.setItem("user", JSON.stringify(email));
-            window.location.href = 'http://localhost:3000/admin/icons';
+            const { id, email } = djangoResponse.data;
+            localStorage.setItem("trvlr_id", id);
+            console.log('User created:', djangoResponse.data);
+            window.location.href = 'http://localhost:3000/admin/mypage/';
+
         } catch (error) {
             console.error(error);
         }
