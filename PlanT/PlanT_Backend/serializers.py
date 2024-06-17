@@ -4,7 +4,7 @@
 from rest_framework import serializers
 # from rest_framework.validators import UniqueValidator
 # from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import Place, Plan, Trip, Route, Tag, TripTag, Traveler
+from .models import Place, Plan, Trip, Route, Tag, Traveler
 
 
 class TravelerSerializer(serializers.ModelSerializer):
@@ -16,14 +16,14 @@ class TravelerSerializer(serializers.ModelSerializer):
 class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
-        fields = ['trip_id', 'trip_start', 'trip_end', 'trip_state', 'trip_traveler', 'trip_tag']
+        fields = ['trip_id', 'trip_start', 'trip_end', 'trip_state', 'trip_score', 'trip_traveler', 'trip_tags']
 
 
 
 class PlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plan
-        fields = ['plan_id', 'plan_date', 'plan_trip']
+        fields = ['plan_id', 'plan_date', 'plan_time', 'plan_trip']
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -32,16 +32,16 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ['tag_id', 'tag_name']
 
 
-class TripTagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TripTag
-        fields = ['trip', 'tag']
+# class TripTagSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = TripTag
+#         fields = ['trip', 'tag']
 
 
 class PlaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Place
-        fields = ['place_id', 'place_name', 'place_type', 'place_time', 'place_latitude', 'place_longitude', 'place_tag']
+        fields = ['place_id', 'place_name', 'place_type', 'place_time', 'place_latitude', 'place_longitude', 'place_tags']
 
 
 

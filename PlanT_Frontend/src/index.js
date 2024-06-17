@@ -34,7 +34,7 @@ root.render(
     <Routes>
       <Route path="/admin/*" element={<AdminLayout />} />
       <Route path="/login/*" element={<LoginLayout />} />
-      <Route path="/" element={<Navigate to="/admin/icons" replace />} />
+      <Route path="/" element={<Navigate to="/admin/mypage" replace />} />
 
     </Routes>
   </BrowserRouter>

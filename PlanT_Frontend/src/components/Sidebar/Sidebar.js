@@ -82,10 +82,15 @@ function Sidebar(props) {
               }
               key={key}
             >
-              <NavLink to={prop.layout + prop.path} className="nav-NavLink">
-                {/* <i className={prop.icon} /> */}
-                <p>{prop.name}</p>
-              </NavLink>
+              {prop.name === "Output Page" ? (
+                  <NavLink className="nav-NavLink">
+                  <p>{prop.name}</p>
+                </NavLink>
+                ) : (
+                  <NavLink to={prop.layout + prop.path} className="nav-NavLink">
+                    <p>{prop.name}</p>
+                  </NavLink>
+                )}
             </li>
           );
         })}

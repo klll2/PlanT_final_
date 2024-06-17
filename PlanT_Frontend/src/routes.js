@@ -21,11 +21,6 @@ import Notifications from "views/Notifications.js";
 import Icons from "views/Icons.js";
 // import Typography from "views/Typography.js";
 import TableList from "views/Tables.js";
-import Maps from "views/Map.js";
-import Pla1 from "views/Pla1";
-import Pla2 from "views/Pla2";
-import Map2 from "views/Map2";
-import Map3 from "views/Map3";
 import Login from "views/LoginGoogle";
 import Mypage from "views/Mypage";
 // import UserPage from "views/User.js";
@@ -66,38 +61,6 @@ var routes = [
     icon: "nc-icon nc-bell-55",
     component: <Notifications />,
     layout: "/admin",
-  },
-  {
-    path: "/maps/map2",
-    name: "Output Page",
-    icon: "nc-icon nc-pin-3",
-    component: <Map2 />,
-    layout: "/admin",
-    hidden: true,
-  },
-  {
-    path: "/maps/map3",
-    name: "Output Page",
-    icon: "nc-icon nc-pin-3",
-    component: <Map3 />,
-    layout: "/admin",
-    hidden: true,
-  },
-  {
-    path: "/notifications/pla1",
-    name: "Input Page(3)",
-    icon: "nc-icon nc-bell-55",
-    component: <Pla1 />,
-    layout: "/admin",
-    hidden: true,
-  },
-  {
-    path: "/notifications/pla2",
-    name: "Input Page(3)",
-    icon: "nc-icon nc-bell-55",
-    component: <Pla2 />,
-    layout: "/admin",
-    hidden: true,
   },
   {  
     path: "/login",

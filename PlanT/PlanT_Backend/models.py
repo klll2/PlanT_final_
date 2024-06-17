@@ -9,7 +9,7 @@
 # from django.contrib.auth.models import AbstractUser, Group, Permission
 # from django.contrib.auth.models import AbstractUser, BaseUserManager, Group, Permission
 from django.db import models
-
+from django.utils import timezone
 # class CustomUserManager(BaseUserManager):
 #     def create_user(self, user_email, password=None, **extra_fields):
 #         if not user_email:
@@ -77,7 +77,7 @@ class Place(models.Model):
     place_latitude = models.DecimalField(max_digits=8, decimal_places=6)
     place_longitude = models.DecimalField(max_digits=9, decimal_places=6)
     # place_detail = models.JSONField(null=True, default=None)
-    place_tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    place_tags = models.ManyToManyField(Tag)
 
 
 class Trip(models.Model):
@@ -90,28 +90,22 @@ class Trip(models.Model):
         (3, '완료'),
     )
     trip_state = models.PositiveSmallIntegerField(choices=STATE_CHOICES)
+    trip_score = models.CharField(max_length=50, null=True)
     trip_traveler = models.ForeignKey(Traveler, on_delete=models.CASCADE)
-    trip_tag = models.ManyToManyField(Tag, through='TripTag')
-    
-
-class TripTag(models.Model):
-    trip = models.ForeignKey(Trip, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('trip', 'tag')
+    trip_tags = models.ManyToManyField(Tag)
         
 
 class Plan(models.Model):
     plan_id = models.AutoField(primary_key=True)
     plan_date = models.DateField()
+    plan_time = models.CharField(max_length=100, null=True)
     plan_trip = models.ForeignKey(Trip, on_delete=models.CASCADE)
 
 
 class Route(models.Model):
     route_id = models.AutoField(primary_key=True)
-    # route_starttime = models.DateTimeField()
-    # route_endtime = models.DateTimeField()
+    # route_starttime = models.DateTimeField(default=timezone.now)
+    # route_endtime = models.DateTimeField(default=timezone.now)
     # route_detail = models.JSONField(blank=True, null=True, default=None)
     route_start = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='route_start_place')
     route_end = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='route_end_place')
